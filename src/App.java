@@ -1,5 +1,10 @@
 public class App {
 
+	/**
+	 * 
+	 * @param num
+	 * @return
+	 */
 	public static boolean esCapicua(int num) {
 		return num == voltea(num);
 	}
@@ -45,6 +50,7 @@ public class App {
 	}
 
 	public static long voltea(long num) {
+		num = num * 10 + 1; // ARREGLAR!!
 		long res = 0;
 		int signo = 1;
 		if (num < 0)
@@ -110,8 +116,8 @@ public class App {
 	public static long trozoDeNumero(long num, int posInicial, int posFinal) { // terminar
 		num = num * 10 + 1;
 		long aux = voltea(num);
-
-		num = voltea(aux) / 10;;
+		aux = potencia(10 , posInicial);
+		aux = voltea(aux) / potencia(10, posFinal + 1);
 		return aux;
 	}
 
