@@ -1,6 +1,6 @@
 package matematicas;
 
-public class Varias {
+public interface Varias {
 
 	/**
 	 * Comprueba si un número pasado como parámetro es capicúa.
@@ -12,6 +12,7 @@ public class Varias {
 	 * @return true si {@code num} es capicúa o false si no lo es.
 	 */
 	public static boolean esCapicua(long num) {
+		// throw new UnsupportedOperationException("Operación no implementada");
 		return num == voltea(num);
 	}
 
@@ -35,7 +36,7 @@ public class Varias {
 	 */
 	public static int siguientePrimo(int num) {
 		while (!esPrimo(++num)) {}
-			return num;
+		return num;
 	}
 
 	/**
@@ -59,9 +60,26 @@ public class Varias {
 	/**
 	 * Versión sobrecargada de {@link #esPrimo(num)} que 
 	 * admite un {@code int}.
+	 * 
+	 * @param num un número entero.
+	 * @return true si {@code num} es primo y false si no lo es.
 	 */
 	public static boolean esPrimo(int num) {
 		return esPrimo((long) num);
+	}
+
+	/**
+	 * 
+	 * @param base el número entero.
+	 * @param exp el exponente al que se quiere elevar el número.
+	 * @return el número {@code num} multiplicado por si mismo 
+	 * 		{@code exp} veces.
+	 */
+	private static double _potencia(int base, int exp) {
+		double res = 1;
+		for (int i = 0; i < exp; i++)
+			res *= base;
+		return res;
 	}
 
 	/**
@@ -73,14 +91,18 @@ public class Varias {
 	 * 		{@code exp} veces.
 	 */
 	public static double potencia(int base, int exp) {
-		if (exp == 0)
-			return 1;
-		if (exp < 0)
-			return 1 / potencia(base, -exp);
-		int res = 1;
-		for (int i = 0; i < Math.abs(exp); i++)
-			res *= base;
-		return res;
+
+		return (exp < 0) ? (double) 1 / _potencia(base, Math.abs(exp)) : _potencia(base, exp);
+	}
+	
+	/**
+	 * Versión sobrecargada de {@link #digitos(double)} que 
+	 * admite un {@code int}.
+	 * @param num un número entero.
+	 * @return el número de dígitos de {@code num}.
+	 */
+	public static int digitos(int num) {
+		return digitos((long) num);
 	}
 
 	/**
@@ -104,13 +126,14 @@ public class Varias {
 	}
 
 	/**
-	 * Versión sobrecargada de {@link #digitos(double)} que 
+	 * Versión sobrecargada de {@link #voltea(long)} que
 	 * admite un {@code int}.
+	 * 
 	 * @param num un número entero.
-	 * @return el número de dígitos de {@code num}.
+	 * @return el número {@code num} invertido.
 	 */
-	public static int digitos(int num) {
-		return digitos((long) num);
+	public static int voltea(int num) {
+		return (int) voltea((long) num);
 	}
 
 	/**
@@ -131,17 +154,6 @@ public class Varias {
 	}
 
 	/**
-	 * Versión sobrecargada de {@link #voltea(long)} que
-	 * admite un {@code int}.
-	 * 
-	 * @param num un número entero.
-	 * @return el número {@code num} invertido.
-	 */
-	public static int voltea(int num) {
-		return (int) voltea((long) num);
-	}
-
-	/**
 	 * Devuelve el dígito que está en la posición n de un número 
 	 * entero. 
 	 * <p>
@@ -153,9 +165,7 @@ public class Varias {
 	 * 		dentro del número {@code num}.
 	 */
 	public static int digitoN(long num, int pos) {
-		num = Math.abs(num);
-		num /= potencia(10, digitos(num) - pos - 1);
-		return (int) num % 10;
+		return (int) trozoDeNumero(num, pos, pos);
 	}
 
 	/**
@@ -169,6 +179,19 @@ public class Varias {
 	 */
 	public static int digitoN(int num, int dig) {
 		return digitoN((long) num, dig);
+	}
+
+	/**
+	 * Versión sobrecargada de {@link #posicionDeDigito(long, dig)}
+	 * que admite un {@code int}.
+	 * 
+	 * @param num un número entero.
+	 * @param dig el dígito que se busca.
+	 * @return la posición de {@code dig} dentro de {@code num} o
+	 * 		-1 si no se encuentra.
+	 */
+	public static int posicionDeDigito(int num, int pos) {
+		return posicionDeDigito((long) num, pos);
 	}
 
 	/**
@@ -190,31 +213,6 @@ public class Varias {
 	}
 
 	/**
-	 * Versión sobrecargada de {@link #posicionDeDigito(long, dig)}
-	 * que admite un {@code int}.
-	 * 
-	 * @param num un número entero.
-	 * @param dig el dígito que se busca.
-	 * @return la posición de {@code dig} dentro de {@code num} o
-	 * 		-1 si no se encuentra.
-	 */
-	public static int posicionDeDigito(int num, int pos) {
-		return posicionDeDigito((long) num, pos);
-	}
-
-	/**
-	 * Le quita a un número entero n dígitos por detrás (por la derecha).
-	 * 
-	 * @param num un número entero.
-	 * @param n el número de dígitos a eliminar.
-	 * @return el número {@code num} sin los {@code n} dígitos de 
-	 * su derecha.
-	 */
-	public static long quitaPorDetras(long num, int n) {
-		return num / (long) potencia(10, n);
-	}
-
-	/**
 	 * Versión sobrecargada de {@link #quitaPorDetras(long, int)} 
 	 * que admite un {@code int}.
 	 * 
@@ -228,17 +226,15 @@ public class Varias {
 	}
 
 	/**
-	 * Le quita a un número entero n dígitos por delante (por la izquierda).
+	 * Le quita a un número entero n dígitos por detrás (por la derecha).
 	 * 
 	 * @param num un número entero.
 	 * @param n el número de dígitos a eliminar.
 	 * @return el número {@code num} sin los {@code n} dígitos de 
-	 * su izquierda.
+	 * su derecha.
 	 */
-	public static long quitaPorDelante(long num, int n) {
-		if (n > digitos(num))
-			return 0;
-		return num % (long) potencia(10, digitos(num) - n);
+	public static long quitaPorDetras(long num, int n) {
+		return num / (long) potencia(10, n);
 	}
 
 	/**
@@ -255,15 +251,17 @@ public class Varias {
 	}
 
 	/**
-	 * Añade un dígito a un número entero por detrás (por la derecha).
+	 * Le quita a un número entero n dígitos por delante (por la izquierda).
 	 * 
 	 * @param num un número entero.
-	 * @param dig el dígito a añadir.
-	 * @return el número {@code num} con el {@code dig} dígito añadido 
-	 * por su derecha.
+	 * @param n el número de dígitos a eliminar.
+	 * @return el número {@code num} sin los {@code n} dígitos de 
+	 * su izquierda.
 	 */
-	public static long pegaPorDetras(long num, int dig) {
-		return juntaNumeros(num, dig);
+	public static long quitaPorDelante(long num, int n) {
+		if (n > digitos(num))
+			return 0;
+		return num % (int) potencia(10, digitos(num) - n);
 	}
 
 	/**
@@ -280,15 +278,15 @@ public class Varias {
 	}
 
 	/**
-	 * Añade un dígito a un número entero por delante (por la izquierda).
+	 * Añade un dígito a un número entero por detrás (por la derecha).
 	 * 
 	 * @param num un número entero.
 	 * @param dig el dígito a añadir.
 	 * @return el número {@code num} con el {@code dig} dígito añadido 
-	 * por su izquierda.
+	 * por su derecha.
 	 */
-	public static long pegaPorDelante(long num, int dig) {
-		return juntaNumeros(dig, num);
+	public static long pegaPorDetras(long num, int dig) {
+		return juntaNumeros(num, dig);
 	}
 
 	/**
@@ -305,22 +303,17 @@ public class Varias {
 	}
 
 	/**
-	 * Toma como parámetros las posiciones incial y final dentro de un
-	 * número entero y devuelve el trozo correspondiente.
+	 * Añade un dígito a un número entero por delante (por la izquierda).
 	 * 
 	 * @param num un número entero.
-	 * @param posInic la posición incial.
-	 * @param posFin la posicióin final.
-	 * @return la porción del número {@code num} que se encuentra entre
-	 * la posición {@code posInic} y la posición {@code posFin} incluidos
-	 * ambos y comenzando en 0.
+	 * @param dig el dígito a añadir.
+	 * @return el número {@code num} con el {@code dig} dígito añadido 
+	 * por su izquierda.
 	 */
-	public static long trozoDeNumero(long num, int posInic, int posFin) {
-		int len = digitos(num);
-		num = quitaPorDelante(num, posInic);
-		return quitaPorDetras(num, len - posFin - 1);
+	public static long pegaPorDelante(long num, int dig) {
+		return juntaNumeros(dig, num);
 	}
-
+	
 	/**
 	 * Versión sobrecargada de {@link #trozoDeNumero(long, int, int)}
 	 * que admite un int.
@@ -337,14 +330,23 @@ public class Varias {
 	}
 
 	/**
-	 * Pega dos números enteros para formar uno.
+	 * Toma como parámetros las posiciones incial y final dentro de un
+	 * número entero y devuelve el trozo correspondiente.
 	 * 
-	 * @param num1 el número que se pegará por la izquierda.
-	 * @param num2 el número que se pegará por la derecha.
-	 * @return el número resultante de pegar {@code num1} y {@code num2}.
+	 * @param num un número entero.
+	 * @param posInic la posición incial.
+	 * @param posFin la posicióin final.
+	 * @return la porción del número {@code num} que se encuentra entre
+	 * la posición {@code posInic} y la posición {@code posFin} incluidos
+	 * ambos y comenzando en 0.
 	 */
-	public static long juntaNumeros(long num1, long num2) {
-		return num1 * (long) potencia(10, digitos(num2)) + num2;
+	public static long trozoDeNumero(long num, int posInic, int posFin) {
+		int len = digitos(num);
+		if (posInic <= posFin) {
+			num = quitaPorDelante(num, posInic);
+			num = quitaPorDetras(num, len - posFin - 1);
+		}
+		return num;
 	}
 
 	/**
@@ -357,5 +359,16 @@ public class Varias {
 	 */
 	public static int juntaNumeros(int num1, int num2) {
 		return (int) juntaNumeros((long) num1, (long) num2);
+	}
+
+	/**
+	 * Pega dos números enteros para formar uno.
+	 * 
+	 * @param num1 el número que se pegará por la izquierda.
+	 * @param num2 el número que se pegará por la derecha.
+	 * @return el número resultante de pegar {@code num1} y {@code num2}.
+	 */
+	public static long juntaNumeros(long num1, long num2) {
+		return num1 * (long) potencia(10, digitos(num2)) + num2;
 	}
 }
