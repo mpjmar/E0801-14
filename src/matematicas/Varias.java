@@ -51,7 +51,7 @@ public interface Varias {
 	public static boolean esPrimo(long num) {
 		if (num < 2)
 			return false;
-		for (long i = num / 2; i > 2; i--)
+		for (long i = 2; i <= num / 2; i++)
 			if (num % i == 0)
 				return false;
 		return true;
